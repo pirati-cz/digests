@@ -13,8 +13,10 @@ class convert_mod_modules extends \phpbb\db\migration\migration
 {
 	public function effectively_installed()
 	{
+		// If ACP_DIGEST_SETTINGS is not in the modules table, there are no modules from the digests mod to worry about.
+		// Instead, the modules will be created in release_3_0_2_modules.php.
 		$sql = 'SELECT module_id
-			FROM ' . $this->table_prefix . "modules
+			FROM ' . $this->table_prefix . "modules 
 			WHERE module_class = 'acp'
 				AND module_langname = 'ACP_DIGEST_SETTINGS'";
 		$result = $this->db->sql_query($sql);
@@ -31,8 +33,10 @@ class convert_mod_modules extends \phpbb\db\migration\migration
 
 	public function update_data()
 	{
+		// This is a hopefully temporary means to get around phpBB module tool bugs in phpBB 3.2. This worked on phpBB 3.1
+		// but phpBB 3.2 won't remove the UCP_DIGESTS category, triggering an error.
 		return array(
-			// ----- Remove old ACP Modules ----- //
+			// ----- Remove old ACP Modules, note the old pattern of ACP_DIGEST_% instead of ACP_DIGESTS_% used for the mod ----- //
 			array('if', array(
 				array('module.exists', array('acp', 'ACP_DIGEST_SETTINGS', 'ACP_DIGEST_GENERAL_SETTINGS')),
 				array('module.remove', array('acp', 'ACP_DIGEST_SETTINGS', 'ACP_DIGEST_GENERAL_SETTINGS')),

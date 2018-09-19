@@ -9,13 +9,13 @@
 
 namespace phpbbservices\digests\migrations;
 
-class release_3_2_1 extends \phpbb\db\migration\migration
+class release_3_2_6 extends \phpbb\db\migration\migration
 {
 
 	static public function depends_on()
 	{
 		return array(
-			'\phpbbservices\digests\migrations\release_3_0_7',
+			'\phpbbservices\digests\migrations\release_3_2_1',
 			'\phpbb\db\migration\data\v320\v320',
 		);
 	}
@@ -24,10 +24,7 @@ class release_3_2_1 extends \phpbb\db\migration\migration
 	{
 
 		return array(
-
-			array('config.add',		array('phpbbservices_digests_lowercase_digest_type', 0)),
-			array('config.add',		array('phpbbservices_digests_show_forum_path', 0)),
-
+			array('config.update',	array('phpbbservices_digests_page_url', 'https://www.phpbbservices.com/my-software/digests_wp/digests-extension/')),
 		);
 
 	}

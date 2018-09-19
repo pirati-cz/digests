@@ -10,10 +10,10 @@
 namespace phpbbservices\digests\migrations;
 
 use phpbbservices\digests\constants\constants;
-use phpbbservices\digests\core\common;
 
 class release_3_0_2_data extends \phpbb\db\migration\migration
 {
+
 	public function effectively_installed()
 	{
 		return $this->config->offsetExists('phpbbservices_digests_enable_auto_subscriptions');
@@ -29,9 +29,7 @@ class release_3_0_2_data extends \phpbb\db\migration\migration
 
 	public function update_data()
 	{
-		
-		$helper = new common();
-		
+
 		return array(
 		
 			// Add Digest extension configuration variables
@@ -50,8 +48,8 @@ class release_3_0_2_data extends \phpbb\db\migration\migration
 			array('config.add',	array('phpbbservices_digests_include_admins', 0)),
 			array('config.add',	array('phpbbservices_digests_include_forums', 0)),
 			array('config.add',	array('phpbbservices_digests_max_items', 0)),
-			array('config.add',	array('phpbbservices_digests_notify_on_admin_changes', 1)), 
-			array('config.add',	array('phpbbservices_digests_page_url', 'https://www.phpbbservices.com/digests_wp/')),
+			array('config.add',	array('phpbbservices_digests_notify_on_admin_changes', 1)),
+			array('config.add',	array('phpbbservices_digests_page_url', 'https://www.phpbbservices.com/my-software/digests_wp/digests-extension/')),
 			array('config.add',	array('phpbbservices_digests_registration_field', 0)),
 			array('config.add',	array('phpbbservices_digests_reply_to_email_address', '')),
 			array('config.add',	array('phpbbservices_digests_show_email', 0)),
@@ -66,7 +64,6 @@ class release_3_0_2_data extends \phpbb\db\migration\migration
 			array('config.add',	array('phpbbservices_digests_test_spool', 0)),
 			array('config.add',	array('phpbbservices_digests_test_time_use', 0)),
 			array('config.add',	array('phpbbservices_digests_test_year', date('Y'))),
-			array('config.add',	array('phpbbservices_digests_time_zone', $helper->make_tz_offset($this->config['board_timezone']))),
 			array('config.add',	array('phpbbservices_digests_user_check_all_forums', 1)),
 			array('config.add',	array('phpbbservices_digests_user_digest_attachments', 1)),
 			array('config.add',	array('phpbbservices_digests_user_digest_block_images', 0)),

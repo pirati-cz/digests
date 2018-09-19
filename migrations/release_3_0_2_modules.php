@@ -13,10 +13,11 @@ class release_3_0_2_modules extends \phpbb\db\migration\migration
 {
 	public function effectively_installed()
 	{
+		// If the ACP Digests General Settings module exists the other modules should exist so this is effectively installed.
 		$sql = 'SELECT module_id
 			FROM ' . $this->table_prefix . "modules
 			WHERE module_class = 'acp'
-				AND module_langname = 'ACP_DIGEST_SETTINGS'";
+				AND module_langname = 'ACP_DIGESTS_GENERAL_SETTINGS'";
 		$result = $this->db->sql_query($sql);
 		$module_id = $this->db->sql_fetchfield('module_id');
 		$this->db->sql_freeresult($result);
