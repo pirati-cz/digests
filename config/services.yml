@@ -5,12 +5,18 @@ services:
             - '@config'
             - '@template'
             - '@request'
+            - '%core.table_prefix%'
+            - '@dbal.conn'
         tags:
             - { name: event.listener }
     phpbbservices.digests.common:
         class: phpbbservices\digests\core\common
         arguments:
             - '@language'
+            - '%core.root_path%'
+            - '@filesystem'
+            - '@log'
+            - '@user'
     phpbbservices.digests.cron.task.cron_task:
         class: phpbbservices\digests\cron\task\digests
         arguments:
@@ -26,6 +32,8 @@ services:
             - '@log'
             - '@phpbbservices.digests.common'
             - '@language'
+            - '@notification_manager'
+            - '@service_container'
         calls:
             - [set_name, [cron.task.cron_task]]
         tags:

@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB Extension - Digests
-* @copyright (c) 2018 Mark D. Hamill (mark@phpbbservices.com)
+* @copyright (c) 2020 Mark D. Hamill (mark@phpbbservices.com)
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
@@ -16,17 +16,29 @@ class common
 	 * Constructor
 	*/
 
+	protected $filesystem;
 	protected $language;
+	protected $phpbb_log;
+	protected $phpbb_root_path;
+	protected $user;
 
 	/**
 	 * Constructor.
 	 *
 	 * @param \phpbb\language\language 	$language 			Language object
+	 * @param string					$phpbb_root_path	Relative path to phpBB root
+	 * @param \phpbb\filesystem		 	$filesystem			Filesystem object
+	 * @param \phpbb\log\log 			$phpbb_log 			phpBB log object
+	 * @param \phpbb\user 				$user 				The user object
 	 */
 
-	public function __construct(\phpbb\language\language $language)
+	public function __construct(\phpbb\language\language $language, $phpbb_root_path,  \phpbb\filesystem\filesystem $filesystem, \phpbb\log\log $phpbb_log, \phpbb\user $user)
 	{
+		$this->filesystem = $filesystem;
 		$this->language = $language;
+		$this->phpbb_log = $phpbb_log;
+		$this->phpbb_root_path = $phpbb_root_path;
+		$this->user = $user;
 	}
 	
 	public function make_hour_string($hour, $user_dateformat)
@@ -85,6 +97,29 @@ class common
 		return $d && $d->format('e') === $date;
 	}
 
+	public function validate_iso_date($date)
+	{
+
+		// Validates an ISO-8601 date string. Found here: https://stackoverflow.com/questions/8003446/php-validate-iso-8601-date-string.
+		// This version does not require Zulu or use gmmktime, or require T. Example: 2018-12-19 14:00:00
+		if (preg_match('/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/', $date, $parts) == true)
+		{
+			$time = mktime($parts[4], $parts[5], $parts[6], $parts[2], $parts[3], $parts[1]);
+
+			$input_time = strtotime($date);
+			if ($input_time === false)
+			{
+				return false;
+			}
+			return $input_time == $time;
+		}
+		else
+		{
+			return false;
+		}
+
+	}
+
 	public function check_send_hour($hour)
 	{
 		// Ensures an hour falls between 0 and 24, adjusts if outside the range.
@@ -100,6 +135,41 @@ class common
 		{
 			return (float) $hour;
 		}
+	}
+
+	public function make_directories()
+	{
+		// Makes the store/phpbbservices/digest directory. If they are successfully created, returns true. If they
+		// cannot be created (likely due to permission issues), returns false.
+
+		if (!$this->filesystem->exists($this->phpbb_root_path . 'store/phpbbservices'))
+		{
+			try
+			{
+				$this->filesystem->mkdir($this->phpbb_root_path . 'store/phpbbservices', '0777');
+			}
+			catch (\Exception $e)
+			{
+				$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_DIGESTS_EXCEPTION_ERROR', false, array($e->getMessage()));
+				return false;
+			}
+		}
+
+		if (!$this->filesystem->exists($this->phpbb_root_path . 'store/phpbbservices/digests'))
+		{
+			try
+			{
+				$this->filesystem->mkdir($this->phpbb_root_path . 'store/phpbbservices/digests', '0777');
+			}
+			catch (\Exception $e)
+			{
+				$this->phpbb_log->add('admin', $this->user->data['user_id'], $this->user->ip, 'LOG_CONFIG_DIGESTS_EXCEPTION_ERROR', false, array($e->getMessage()));
+				return false;
+			}
+		}
+
+		return true;
+
 	}
 
 }

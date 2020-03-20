@@ -2,7 +2,7 @@
 /**
 *
 * @package phpBB Extension - Digests
-* @copyright (c) 2018 Mark D. Hamill (mark@phpbbservices.com)
+* @copyright (c) 2020 Mark D. Hamill (mark@phpbbservices.com)
 * @license http://opensource.org/licenses/gpl-2.0.php GNU General Public License v2
 *
 */
@@ -10,7 +10,6 @@
 namespace phpbbservices\digests\migrations;
 
 use phpbbservices\digests\constants\constants;
-use phpbbservices\digests\core\common;
 
 class convert_mod_data extends \phpbb\db\migration\migration
 {

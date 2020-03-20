@@ -29,11 +29,11 @@ $(document).ready(function() {
 
 	// If any individual forum is unchecked, the all_forums checkbox should be unchecked.
 	// If all individual forums are checked, the all_forums checkbox should be checked.
-	$("[id*=elt_]").click(function() {
+	$("[name*='-forums']").click(function() {
 		var allChecked = true;	// Assume all forums for the block under focus are checked
 		var id = ($(this).attr('id'));
 		var rowId = getRowId(id);	// Returns the unique row id for the block being changed by parsing the id attribute
-		$("[id*=elt_]").each(function() {
+		$("[name*='-forums']").each(function() {
 			var instanceId = $(this).attr('id');
 			var instanceRowId = getRowId(instanceId);	// Returns the unique row id for the block being changed by parsing the id attribute
 			if (instanceRowId === rowId && !$(this).is(':checked')) {
@@ -44,6 +44,9 @@ $(document).ready(function() {
 		if (allChecked) {
 			($("#user-" + rowId + "-all_forums").prop('checked', true));
 		}
+		else {
+			($("#user-" + rowId + "-all_forums").prop('checked', false));
+		}
 	});
 
 	// If the all forums checkbox is checked, all individual forums should be checked, and visa versa.
@@ -51,7 +54,7 @@ $(document).ready(function() {
 		var id = ($(this).attr('id'));
 		var rowId = getRowId(id);	// Returns the unique row id for the block being changed by parsing the id attribute
 		if ($(this).is(':checked')) {
-			$("[id*=elt_]").each(function() {
+			$("[name*='-forums']").each(function() {
 				var instanceId = $(this).attr('id');
 				var instanceRowId = getRowId(instanceId);	// Returns the unique row id for the block being changed by parsing the id attribute
 				if (instanceRowId === rowId) {
@@ -60,7 +63,7 @@ $(document).ready(function() {
 			});
 		}
 		else {
-			$("[id*=elt_]").each(function() {
+			$("[name*='-forums']").each(function() {
 				var instanceId = $(this).attr('id');
 				var instanceRowId = getRowId(instanceId);	// Returns the unique row id for the block being changed by parsing the id attribute
 				if (instanceRowId === rowId) {
@@ -71,13 +74,15 @@ $(document).ready(function() {
 	});
 
 	// If a field was not changed, disable it so it won't be sent to the web server. This helps get around PHP's
-	// max_input_var resource limitation on the Edit subscribers screen.
+	// max_input_var resource limitation on the Edit subscribers screen. The field should also not be marked as required,
+	// to avoid a potential Javascript error that could stop form submission.
 	$('#acp_digests').submit(function() {
 		if ($('#digests').length === 1) {
 			// Logic only applies on edit subscribers screen because stack won't exist otherwise. #digests is an
 			// ID only on the edit subscribers screen.
 			$('input, select').each(function() {
 				if (!inStack($(this).attr('name'))) {
+					$(this).prop('required', false);
 					$(this).prop('disabled', true);
 				}
 			});
